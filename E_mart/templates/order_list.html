@@ -1,0 +1,112 @@
+{% extends 'master.html' %} {% load static %} {% block title %}Welcome to Electro Shop
+- Your One-Stop Shop{% endblock %} {% block content %}
+<!--Body Content-->
+<div class="orders-container">
+        <h2>My Orders</h2>
+
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <h3>Order #{{ order.id }}</h3>
+                        <span>Placed on: {{ order.created_at|date:"F d, Y H:i" }}</span>
+                    </div>
+                    <div class="order-details">
+                        <p><strong>Total:</strong> ${{ order.total_price|floatformat:2 }}</p>
+                        <p><strong>Name:</strong> {{ order.name }}</p>
+                        <p><strong>Phone:</strong> {{ order.phone }}</p>
+                        <p><strong>Email:</strong> {{ order.email }}</p>
+                        <p><strong>Status:</strong> {% if order.paid %}Paid{% else %}Pending Payment{% endif %}</p>
+                        <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                        <p><strong>Shipping Address:</strong> {{ order.shipping_address }}</p>
+                    </div>
+                    <div class="order-items">
+                        <h4>Items:</h4>
+                        {% for item in order.items.all %}
+                            <div class="order-item">
+                                <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                                <span>${{ item.get_cost|floatformat:2 }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-orders">
+                <p>You haven't placed any orders yet.</p>
+                <p><a href="{% url 'shop' %}">Start Shopping Now!</a></p>
+            </div>
+        {% endif %}
+    </div>
+    <style>
+        .orders-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        .orders-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .order-card {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .order-header h3 {
+            margin: 0;
+            color: #007bff;
+        }
+        .order-header span {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .order-details p {
+            margin: 5px 0;
+        }
+        .order-items {
+            margin-top: 15px;
+            border-top: 1px dashed #eee;
+            padding-top: 10px;
+        }
+        .order-items h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 0.95em;
+        }
+        .no-orders {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        .no-orders a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .no-orders a:hover {
+            text-decoration: underline;
+        }
+    </style>
+<!--End Body Content-->
+{% endblock %}

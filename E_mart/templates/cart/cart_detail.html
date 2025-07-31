@@ -1,0 +1,266 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block title %}Cart - Electro Shop{% endblock %}
+{% block content %}
+<!--Body Content-->
+<div class="Shopping-cart-area pt-60 pb-60">
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <!-- Navigation breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'shop' %}">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Cart</li>
+        </ol>
+      </nav>
+
+      <!-- Display Django messages -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+      <form action="#">
+        <div class="table-content table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="li-product-remove">Remove</th>
+                <th class="li-product-thumbnail">Images</th>
+                <th class="cart-product-name">Product</th>
+                <th class="li-product-price">Unit Price</th>
+                <th class="li-product-quantity">Quantity</th>
+                <th class="li-product-subtotal">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if cart_items %}
+                {% for item in cart_items %}
+                <tr data-product-id="{{ item.product.id }}">
+                  <td class="li-product-remove">
+                    {% if item.product and item.product.id %}
+                      <a href="{% url 'item_clear' item.product.id %}"
+                          onclick="return confirm('Are you sure you want to remove this item?')">
+                        <i class="fa fa-times"></i>
+                      </a>
+                    {% endif %}
+                  </td>
+                  <td class="li-product-thumbnail">
+                    <a href="{% if item.product and item.product.id %}{% url 'detail' item.product.id %}{% else %}#{% endif %}">
+                      {% if item.image %}
+                        <img
+                          src="{{ item.image }}"
+                          alt="{{ item.name }}"
+                          style="width: 50px; height: 50px; object-fit: cover"
+                        />
+                      {% else %}
+                        <img
+                          src="{% static 'images/no-image.png' %}"
+                          alt="No Image"
+                          style="width: 50px; height: 50px; object-fit: cover"
+                        />
+                      {% endif %}
+                    </a>
+                  </td>
+                  <td class="li-product-name">
+                    <a href="{% if item.product and item.product.id %}{% url 'detail' item.product.id %}{% else %}#{% endif %}">
+                      {{ item.name }}
+                    </a>
+                    {% if item.product and item.product.category %}
+                      <br><small class="text-muted">{{ item.product.category.name }}</small>
+                    {% endif %}
+                  </td>
+                  <td class="li-product-price">
+                    <span class="amount unit-price">${{ item.price|floatformat:2 }}</span>
+                  </td>
+                  <td class="quantity">
+                    <label></label>
+                    <input
+                      class="cart-plus-minus-box"
+                      value="{{ item.quantity }}"
+                      type="text"
+                      readonly
+                    />
+                  </td>
+                  <td class="product-subtotal">
+                    <span class="amount item-total">${{ item.total_price|floatformat:2 }}</span>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="6" class="text-center">
+                    <h4>Your cart is empty</h4>
+                    <p>
+                      <a href="{% url 'index' %}" class="btn btn-primary">Continue Shopping</a>
+                    </p>
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if cart_items %}
+        <!-- Continue Shopping and Cart Actions -->
+        <div class="row">
+          <div class="col-12">
+            <div class="coupon-all">
+              <div class="coupon">
+                <a href="{% url 'shop' %}" class="button continue-shopping">
+                  <i class="fa fa-arrow-left"></i> Continue Shopping
+                </a>
+                <a href="{% url 'index' %}" class="button continue-shopping">
+                  <i class="fa fa-home"></i> Back to Home
+                </a>
+              </div>
+              <div class="coupon2">
+                <a
+                  href="{% url 'cart_clear' %}"
+                  class="button clear-cart"
+                  onclick="return confirm('Are you sure you want to clear your cart?')"
+                >
+                  <i class="fa fa-trash"></i> Clear Cart
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 ml-auto">
+            <div class="cart-page-total">
+              <h2>Cart totals</h2>
+              <ul>
+                <li>
+                  Subtotal
+                  <span class="cart-subtotal-amount">${{ cart_total|floatformat:2 }}</span>
+                </li>
+                <li>
+                  Total <span class="cart-total-amount">${{ cart_total|floatformat:2 }}</span>
+                </li>
+              </ul>
+              <a href="{% url 'checkout' %}" class="checkout-btn">
+                <i class="fa fa-credit-card"></i> Proceed to checkout
+              </a>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <!-- Empty cart actions -->
+        <div class="row">
+          <div class="col-12 text-center">
+            <div class="empty-cart-actions">
+              <a href="{% url 'index' %}" class="button">
+                <i class="fa fa-home"></i> Go to Home
+              </a>
+              <a href="{% url 'shop' %}" class="button">
+                <i class="fa fa-shopping-bag"></i> Browse Products
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+<!--End Body Content-->
+<style>
+/* Existing CSS */
+.breadcrumb {    background-color: #f8f9fa;    padding: 10px 15px;    border-radius: 5px;}.breadcrumb a {    color: #007bff;    text-decoration: none;}.breadcrumb a:hover {    text-decoration: underline;}.cart-plus-minus {    display: flex;    align-items: center;    border: 1px solid #ddd;    border-radius: 3px;    max-width: 120px;}.cart-plus-minus-box {    width: 60px;    height: 35px;    text-align: center;    border: none;    background: white;    font-weight: bold;}.qtybutton {    width: 30px;    height: 35px;    display: flex;    align-items: center;    justify-content: center;    background: #f8f9fa;    cursor: pointer;    transition: background-color 0.3s;}.qtybutton:hover {    background: #e9ecef;}.qtybutton a {    color: #333;    text-decoration: none;    font-size: 16px;}.li-product-remove a {    color: #dc3545;    font-size: 18px;}.li-product-remove a:hover {    color: #c82333;}.coupon-all {    display: flex;    justify-content: space-between;    align-items: center;    margin: 20px 0;    flex-wrap: wrap;}.coupon {    display: flex;    gap: 10px;    flex-wrap: wrap;}.button {    padding: 10px 20px;    background: #007bff;    color: white;    border: none;    border-radius: 3px;    cursor: pointer;    text-decoration: none;    display: inline-block;    transition: background-color 0.3s;    margin: 5px;}.button:hover {    background: #0056b3;    color: white;    text-decoration: none;}.button.continue-shopping {    background: #28a745;}.button.continue-shopping:hover {    background: #218838;}.button.clear-cart {    background: #dc3545;}.button.clear-cart:hover {    background: #c82333;}.cart-page-total {    background: #f8f9fa;    padding: 20px;    border-radius: 5px;    border: 1px solid #dee2e6;}.cart-page-total ul {    list-style: none;    padding: 0;    margin: 0;}.cart-page-total ul li {    display: flex;    justify-content: space-between;    padding: 10px 0;    border-bottom: 1px solid #ddd;}.cart-page-total ul li:last-child {    border-bottom: none;    font-weight: bold;    font-size: 18px;    color: #28a745;}.checkout-btn {    display: block;    width: 100%;    text-align: center;    padding: 15px;    background: #28a745;    color: white;    text-decoration: none;    border-radius: 5px;    margin-top: 15px;    font-weight: bold;    transition: background-color 0.3s;}.checkout-btn:hover {    background: #218838;    color: white;    text-decoration: none;}.empty-cart-actions {    margin: 40px 0;}.empty-cart-actions .button {    margin: 0 10px;    padding: 15px 30px;    font-size: 16px;}/* Responsive design */@media (max-width: 768px) {    .coupon-all {        flex-direction: column;        align-items: stretch;    }        .coupon {        justify-content: center;        margin-bottom: 10px;    }        .cart-plus-minus {        max-width: 100px;    }        .cart-plus-minus-box {        width: 40px;    }        .qtybutton {        width: 25px;    }}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cartTable = document.querySelector('.table-content table');
+  const cartSubtotalSpan = document.querySelector('.cart-subtotal-amount');
+  const cartTotalSpan = document.querySelector('.cart-total-amount');
+
+  if (!cartTable) return; // Exit if cart table is not found
+
+  cartTable.addEventListener('click', async function(event) {
+      const target = event.target.closest('.qty-btn'); // Find the closest button with class 'qty-btn'
+
+      if (target) {
+          event.preventDefault(); // Prevent the default link navigation
+
+          const url = target.href;
+          const row = target.closest('tr');
+          const quantityInput = row.querySelector('.cart-plus-minus-box');
+          const itemTotalSpan = row.querySelector('.item-total');
+
+          try {
+              const response = await fetch(url, {
+                  method: 'GET', // Or 'POST' if your Django views expect POST
+                  headers: {
+                      'X-Requested-With': 'XMLHttpRequest', // Indicate an AJAX request
+                      // If your Django views require CSRF for GET requests or if you switch to POST,
+                      // uncomment the line below and ensure getCookie function is available.
+                      // 'X-CSRFToken': getCookie('csrftoken')
+                  }
+              });
+
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              const data = await response.json();
+
+              // Update individual item quantity and total
+              if (data.quantity !== undefined) {
+                  quantityInput.value = data.quantity;
+              }
+              if (data.item_total !== undefined) {
+                  itemTotalSpan.textContent = `$${parseFloat(data.item_total).toFixed(2)}`;
+              }
+
+              // Update overall cart totals
+              if (data.cart_total !== undefined) {
+                  cartSubtotalSpan.textContent = `$${parseFloat(data.cart_total).toFixed(2)}`;
+                  cartTotalSpan.textContent = `$${parseFloat(data.cart_total).toFixed(2)}`;
+              }
+
+              // Optional: Display Django messages if returned in JSON
+              if (data.messages) {
+                  // You would need to implement a way to display these messages dynamically,
+                  // for example, by appending them to a designated message area.
+                  console.log('Django Messages:', data.messages);
+              }
+
+          } catch (error) {
+              console.error('Error updating cart item:', error);
+              // Optionally, revert quantity or show an error message to the user
+          }
+      }
+  });
+
+  // Helper function to get CSRF token (uncomment if needed)
+  /*
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  */
+});
+</script>
+{% endblock %}

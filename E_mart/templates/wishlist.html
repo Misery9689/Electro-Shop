@@ -1,0 +1,401 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}My Wishlist - Electro Shop{% endblock %}
+
+{% block content %}
+<div class="wishlist-container">
+    <div class="container-fluid px-4 py-4">
+        <!-- Wishlist Header -->
+        <div class="wishlist-header d-flex justify-content-between align-items-center mb-4">
+            <div class="wishlist-title-section">
+                <h2 class="wishlist-title mb-0">
+                    <i class="fa fa-heart text-danger mr-2"></i>
+                    My Wishlist
+                    {% if wishlist_items %}
+                        <span class="badge badge-primary ml-2">{{ wishlist_items|length }} item{{ wishlist_items|length|pluralize }}</span>
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if wishlist_items %}
+            <!-- Wishlist Table -->
+            <div class="wishlist-table-container">
+                <table class="table wishlist-table">
+                    <thead>
+                        <tr>
+                            <th width="15%">Image</th>
+                            <th width="30%">Product</th>
+                            <th width="15%">Price</th>
+                            <th width="10%">Stock</th>
+                            <th width="20%">Actions</th>
+                            <th width="8%">Remove</th>
+                            <th width="7%">Added</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in wishlist_items %}
+                        <tr class="wishlist-item">
+                            <td>
+                                <div class="product-image-wrapper">
+                                    <a href="{% url 'detail' item.product.id %}">
+                                        <img src="{{ item.product.image.url }}" 
+                                             alt="{{ item.product.name }}" 
+                                             class="product-image">
+                                    </a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="product-details">
+                                    <h5 class="product-name">
+                                        <a href="{% url 'detail' item.product.id %}">{{ item.product.name }}</a>
+                                    </h5>
+                                    <p class="product-category">{{ item.product.category.name }}</p>
+                                    <div class="product-rating">
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= item.product.rating %}
+                                                <i class="fa fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="fa fa-star-o text-muted"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="rating-text">({{ item.product.rating }}/5)</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="product-price">
+                                    {% if item.product.price %}
+                                        ${{ item.product.price|floatformat:2 }}
+                                    {% else %}
+                                        <span class="text-muted">Price not available</span>
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-success">In Stock</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'cart_add' item.product.id %}" 
+                                       class="btn btn-primary btn-sm mb-1"
+                                       onclick="this.innerHTML='<i class=\'fa fa-spinner fa-spin\'></i> Adding...'; this.style.pointerEvents='none';">
+                                        <i class="fa fa-shopping-cart mr-1"></i>Add to Cart
+                                    </a>
+                                    <a href="{% url 'detail' item.product.id %}" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fa fa-eye mr-1"></i>View Details
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'wishlist_remove' item.product.id %}" 
+                                   class="btn btn-danger btn-sm remove-btn"
+                                   onclick="return confirm('Remove {{ item.product.name|escapejs }} from wishlist?')">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <small class="text-muted">{{ item.created_at|date:"M d" }}</small>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Wishlist Summary -->
+            <div class="wishlist-summary">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h4 class="summary-title">Wishlist Summary</h4>
+                        <p class="summary-item mb-1">Total Items: <strong>{{ wishlist_items|length }}</strong></p>
+                        <p class="summary-item mb-0">
+                            Total Value: 
+                            <strong>
+                                {% if total_value %}
+                                    ${{ total_value|floatformat:2 }}
+                                {% else %}
+                                    $0.00
+                                {% endif %}
+                            </strong>
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <a href="{% url 'shop' %}" class="btn btn-outline-primary mr-2">
+                            <i class="fa fa-shopping-bag mr-1"></i>Continue Shopping
+                        </a>
+                        
+                        <!-- Add All to Cart Form -->
+                        <form method="post" action="{% url 'wishlist_add_all_to_cart' %}" style="display: inline-block;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success" 
+                                    onclick="return confirm('Add all {{ wishlist_items|length }} item{{ wishlist_items|length|pluralize }} to cart?')">
+                                <i class="fa fa-shopping-cart mr-1"></i>Add All to Cart
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            <!-- Empty Wishlist -->
+            <div class="empty-wishlist text-center py-5">
+                <div class="empty-icon mb-4">
+                    <i class="fa fa-heart-o"></i>
+                </div>
+                <h3 class="empty-title">Your wishlist is empty</h3>
+                <p class="empty-text">Start adding products to your wishlist by clicking the heart icon!</p>
+                <a href="{% url 'shop' %}" class="btn btn-primary btn-lg">
+                    <i class="fa fa-shopping-bag mr-1"></i>Start Shopping
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.wishlist-container {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 20px;
+}
+
+.wishlist-title {
+    color: #333;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.wishlist-title .badge {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+}
+
+.wishlist-table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.wishlist-table {
+    margin-bottom: 0;
+}
+
+.wishlist-table thead th {
+    background-color: #495057;
+    color: white;
+    border: none;
+    padding: 15px 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.wishlist-table tbody td {
+    padding: 20px 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+}
+
+.wishlist-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.product-image-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #eee;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.05);
+}
+
+.product-details .product-name {
+    margin-bottom: 5px;
+}
+
+.product-details .product-name a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.product-details .product-name a:hover {
+    color: #007bff;
+}
+
+.product-category {
+    color: #6c757d;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.rating-text {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.product-price {
+    color: #28a745;
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: block;
+}
+
+.action-buttons .btn {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-1px);
+}
+
+.remove-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+    text-decoration: none;
+    color: white;
+    transform: scale(1.1);
+}
+
+.wishlist-summary {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.summary-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.summary-item {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.empty-wishlist {
+    background: white;
+    border-radius: 10px;
+    padding: 60px 20px;
+    margin: 50px 0;
+}
+
+.empty-icon i {
+    font-size: 80px;
+    color: #dee2e6;
+}
+
+.empty-title {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.empty-text {
+    color: #6c757d;
+    margin-bottom: 30px;
+}
+
+/* Ensure all buttons are clickable */
+.btn {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+@media (max-width: 768px) {
+    .wishlist-table-container {
+        overflow-x: auto;
+    }
+    
+    .wishlist-table {
+        min-width: 800px;
+    }
+    
+    .action-buttons .btn {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+    
+    .wishlist-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+}
+</style>
+
+<!-- Minimal JavaScript - only for visual feedback -->
+<script>
+// Simple function to ensure buttons work after page navigation
+function initializeWishlist() {
+    // Add visual feedback for all buttons
+    var buttons = document.querySelectorAll('.btn');
+    buttons.forEach(function(button) {
+        button.style.cursor = 'pointer';
+        button.style.pointerEvents = 'auto';
+    });
+    
+    console.log('Wishlist initialized - ' + buttons.length + ' buttons found');
+}
+
+// Initialize when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeWishlist);
+} else {
+    initializeWishlist();
+}
+
+// Re-initialize when user navigates back to page
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        initializeWishlist();
+    }
+});
+</script>
+{% endblock %}
