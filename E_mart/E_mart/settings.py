@@ -28,7 +28,31 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+SECRET_KEY = config('SECRET_KEY')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+# Ensure DEBUG is controlled by environment variable, not hardcoded True
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+ALLOWED_HOSTS = []
+
+# Get hosts from the ALLOWED_HOSTS environment variable, if set
+env_hosts = os.environ.get("ALLOWED_HOSTS")
+if env_hosts:
+    ALLOWED_HOSTS.extend(env_hosts.split(','))
+
+# Add Render's external hostname if available
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
+
+# Add localhost for local development if not already present
+if 'localhost' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('localhost')
+if '127.0.0.1' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('127.0.0.1')
+
+# Remove any potential duplicates
+ALLOWED_HOSTS = list(set(ALLOWED_HOSTS))
 
 # E_mart/settings.py
 INSTALLED_APPS = [
