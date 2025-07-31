@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-g^ff^h_3w12^r#68bgk7i^n)!-9)3-&3##&$rn(_cu!x9pomp5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [*]
 
 # E_mart/settings.py
 INSTALLED_APPS = [
