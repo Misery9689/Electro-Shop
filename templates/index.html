@@ -1,0 +1,407 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block title %}Welcome to Electro Shop- Your One-Stop Shop{% endblock %}
+{% block content %}
+<!-- Begin Slider With Category Menu Area -->
+<div class="slider-with-banner">
+      <div class="container">
+        <div class="row">
+          <!-- Begin Category Menu Area -->
+          <div class="col-lg-3">
+            <!--Category Menu Start-->
+            <div class="category-menu">
+              <div class="category-heading">
+                <h2 class="categories-toggle"><span>categories</span></h2>
+              </div>
+              <div id="cate-toggle" class="category-menu-list">
+                <ul>
+                  <!-- Add "All Categories" option -->
+                  <li class="right-menu">
+                    <a href="{% url 'index' %}">All Categories</a>
+                  </li>
+                  {% for cat in category %}
+                  <li class="right-menu">
+                    <!-- Updated category link with proper URL parameter -->
+                    <a href="{% url 'index' %}?category={{ cat.id }}"
+                      >{{ cat.name }}</a
+                    >
+                    {% if cat.sub_category_set.all %}
+                    <ul class="cat-mega-menu">
+                      {% for i in cat.sub_category_set.all %}
+                      <li class="right-menu">
+                        <!-- You can also add subcategory filtering if needed -->
+                        <a href="{% url 'index' %}?category={{ cat.id }}"
+                          >{{ i.name }}</a
+                        >
+                      </li>
+                      {% endfor %}
+                    </ul>
+                    {% endif %}
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <!--Category Menu End-->
+          </div>
+          <!-- Category Menu Area End Here -->
+          <!-- Begin Slider Area -->
+          <div class="col-lg-9">
+            <div class="slider-area pt-sm-30 pt-xs-30">
+              <div class="slider-active owl-carousel">
+                <!-- Begin Single Slide Area -->
+                <div class="single-slide align-center-left animation-style-02 bg-4">
+                  
+                  <div class="slider-progress"></div>
+                  
+                  <div class="slider-content">
+                    
+                    <h5>Sale Offer <span>-20% Off</span> This Week</h5>
+                    <h2>Chamcham Galaxy S9 | S9+</h2>
+                    <h3>Starting at <span>$589.00</span></h3>
+                    <div class="default-btn slide-btn">
+                      <a class="links" href="{% url 'shop' %}">Shopping Now</a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Single Slide Area End Here -->
+                <!-- Begin Single Slide Area -->
+                <div class="single-slide align-center-left animation-style-01 bg-5">
+                  
+                  <div class="slider-progress"></div>
+                  <div class="slider-content">
+                    <h5>Sale Offer <span>Black Friday</span> This Week</h5>
+                    <h2>Work Desk Surface Studio 2018</h2>
+                    <h3>Starting at <span>$1599.00</span></h3>
+                    <div class="default-btn slide-btn">
+                      <a class="links" href="{% url 'shop' %}">Shopping Now</a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Single Slide Area End Here -->
+                <!-- Begin Single Slide Area -->
+                <div class="single-slide align-center-left animation-style-02 bg-6">
+                  <div class="slider-progress"></div>
+                  <div class="slider-content">
+                    <h5>Sale Offer <span>-10% Off</span> This Week</h5>
+                    <h2>Phantom 4 Pro+ Obsidian</h2>
+                    <h3>Starting at <span>$809.00</span></h3>
+                    <div class="default-btn slide-btn">
+                      <a class="links" href="{% url 'shop' %}">Shopping Now</a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Single Slide Area End Here -->
+              </div>
+            </div>
+          </div>
+          <!-- Slider Area End Here -->
+        </div>
+      </div>
+    </div><!-- Slider With Category Menu Area End Here --><!-- Begin Li's Static Banner Area --><div class="li-static-banner pt-20 pt-sm-30 pt-xs-30">
+      <div class="container">
+        <div class="row">
+          <!-- Begin Single Banner Area -->
+          <div class="col-lg-4 col-md-4">
+            <div class="single-banner pb-xs-30">
+              <a href="#">
+                <img
+                  src="{% static 'images/banner/1_3.jpg' %}"
+                  alt="Li's Static Banner"
+                />
+              </a>
+            </div>
+          </div>
+          <!-- Single Banner Area End Here -->
+          <!-- Begin Single Banner Area -->
+          <div class="col-lg-4 col-md-4">
+            <div class="single-banner pb-xs-30">
+              <a href="#">
+                <img
+                  src="{% static 'images/banner/1_4.jpg' %}"
+                  alt="Li's Static Banner"
+                />
+              </a>
+            </div>
+          </div>
+          <!-- Single Banner Area End Here -->
+          <!-- Begin Single Banner Area -->
+          <div class="col-lg-4 col-md-4">
+            <div class="single-banner">
+              <a href="#">
+                <img
+                  src="{% static 'images/banner/1_5.jpg' %}"
+                  alt="Li's Static Banner"
+                />
+              </a>
+            </div>
+          </div>
+          <!-- Single Banner Area End Here -->
+        </div>
+      </div>
+    </div><!-- Li's Static Banner Area End Here --><!-- Begin Li's Products Area --><section class="product-area li-laptop-product li-laptop-product-2 pb-45">
+      <div class="container">
+        <div class="row">
+          <!-- Begin Li's Section Area -->
+          <div class="col-lg-12">
+            
+            <div class="li-banner-2 pt-15">
+              <div class="row">
+                <!-- Begin Single Banner Area -->
+                <div class="col-lg-6 col-md-6">
+                  <div class="single-banner">
+                    <a href="#">
+                      <img
+                        src="{% static 'images/banner/2_1.jpg' %}"
+                        alt="Li's Static Banner"
+                      />
+                    </a>
+                  </div>
+                </div>
+                <!-- Single Banner Area End Here -->
+                <!-- Begin Single Banner Area -->
+                <div class="col-lg-6 col-md-6">
+                  <div class="single-banner pt-xs-30">
+                    <a href="#">
+                      <img
+                        src="{% static 'images/banner/2_2.jpg' %}"
+                        alt="Li's Static Banner"
+                      />
+                    </a>
+                  </div>
+                </div>
+                <!-- Single Banner Area End Here -->
+              </div>
+            </div>
+            <div class="row">
+              {% if products %} {# Changed 'product' to 'products' #}
+              <div class="product-active owl-carousel">
+                {% for produ in products %} {# Changed 'product' to 'products' #}
+                <div class="col-lg-12">
+                  <!-- single-product-wrap start -->
+                  <div class="single-product-wrap">
+                    <div class="product-image">
+                      <a href="{% url 'detail' produ.id %}"> {# Added produ.id to detail URL #}
+                        <img
+                          src="{{ produ.image.url }}"
+                          alt="Li's Product Image"
+                          height="185px"
+                        />
+                      </a>
+                      {% if produ.is_new %}<span class="sticker">New</span>{% endif %} {# Added is_new check #}
+                    </div>
+                    <div class="product_desc">
+                      <div class="product_desc_info">
+                        <div class="product-review">
+                          <h5 class="manufacturer">
+                            <a
+                              href="{% url 'index' %}?category={{ produ.category.id }}"
+                              >{{ produ.category.name }}</a
+                            >
+                          </h5>
+                          <div class="rating-box">
+                            <ul class="rating">
+                              {% for _ in "12345"|make_list %} {# Loop for rating stars #}
+                                {% if forloop.counter <= produ.rating %}
+                                  <li><i class="fa fa-star-o"></i></li>
+                                {% else %}
+                                  <li class="no-star"><i class="fa fa-star-o"></i></li>
+                                {% endif %}
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                        <h4>
+                          <a class="product_name" href="{% url 'detail' produ.id %}" {# Added produ.id to detail URL #}
+                            >{{ produ.name }}</a
+                          >
+                        </h4>
+                        <div class="price-box">
+                          <span class="new-price">${{ produ.price|floatformat:2 }}</span> {# Added floatformat #}
+                        </div>
+                      </div>
+                      <div class="add-actions">
+                        <ul class="add-actions-link">
+                          <li class="add-cart active">
+                            {% if produ.id %}
+                            <a href="{% url 'cart_add' produ.id %}">Add to cart</a>
+                            {% else %}
+                            <span class="btn btn-secondary disabled"
+                              >Unavailable</span
+                            >
+                            {% endif %}
+                          </li>
+                          <li>
+  <a class="links-details" href="{% url 'wishlist_add' produ.id %}">
+    <i class="fa fa-heart-o"></i>
+  </a>
+</li>
+                          <li>
+                            <a
+                              href="#"
+                              title="quick view"
+                              class="quick-view-btn"
+                              data-toggle="modal"
+                              data-target="#exampleModalCenter"
+                            >
+                              <i class="fa fa-eye"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- single-product-wrap end -->
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="col-lg-12">
+                <div class="alert alert-info text-center">
+                  <h4>No products found</h4>
+                  <p>
+                    {% if selected_category %} No products available in the "{{
+                    selected_category.name }}" category. {% else %} No products
+                    available at the moment. {% endif %}
+                  </p>
+                  <a href="{% url 'index' %}" class="btn btn-primary"
+                    >View All Products</a
+                  >
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <!-- Li's Section Area End Here -->
+        </div>
+      </div>
+    </section><!-- Li's Products Area End Here --><!-- Begin Li's Static Home Area --><div class="li-static-home">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <!-- Begin Li's Static Home Image Area -->
+            <div class="li-static-home-image" style="background-image: url({% static 'images/bg-banner/1.jpg' %}); background-size: cover; height: 400px;">
+</div>
+
+            <!-- Li's Static Home Image Area End Here -->
+            <!-- Begin Li's Static Home Content Area -->
+            <div class="li-static-home-content">
+              <p>Sale Offer<span>-20% Off</span>This Week</p>
+              <h2>Featured Product</h2>
+              <h2>Meito Accessories 2018</h2>
+              <p class="schedule">Starting at <span> $1209.00</span></p>
+              <div class="default-btn">
+                <a href="{% url 'shop' %}" class="links">Shopping Now</a>
+              </div>
+            </div>
+            <!-- Li's Static Home Content Area End Here -->
+          </div>
+        </div>
+      </div>
+    </div><!-- Li's Static Home Area End Here --><!-- Begin All Products Area --><section
+      class="product-area li-trending-product li-trending-product-2 pt-60 pb-45"
+    >
+      <div class="container">
+        <div class="row">
+          <!-- Begin Li's Section Area -->
+          <div class="col-lg-12">
+            <div class="li-product-tab li-trending-product-tab">
+              <h2><span>All Products</span></h2>
+              <div class="text-right mb-3">
+                <a href="{% url 'shop' %}" class="btn btn-primary">See More</a>
+              </div>
+            </div>
+            <!-- Begin All Products Content Area -->
+            <div class="li-tab-content li-trending-product-content">
+              <div class="row">
+                {% if products %}
+                <div class="product-active owl-carousel">
+                  {% for product in products %}
+                  <div class="col-lg-12">
+                    <!-- single-product-wrap start -->
+                    <div class="single-product-wrap">
+                      <div class="product-image">
+                        <a href="{% url 'detail' product.id %}">
+                          <img
+                            src="{{ product.image.url }}"
+                            alt="Li's Product Image"
+                            height="185px"
+                          />
+                        </a>
+                        {% if product.is_new %}<span class="sticker">New</span>{% endif %}
+                      </div>
+                      <div class="product_desc">
+                        <div class="product_desc_info">
+                          <div class="product-review">
+                            <h5 class="manufacturer">
+                              <a href="{% url 'index' %}?category={{ product.category.id }}">{{ product.category.name }}</a>
+                            </h5>
+                            <div class="rating-box">
+                              <ul class="rating">
+                                {% for _ in "12345"|make_list %}
+                                  {% if forloop.counter <= product.rating %}
+                                    <li><i class="fa fa-star-o"></i></li>
+                                  {% else %}
+                                    <li class="no-star"><i class="fa fa-star-o"></i></li>
+                                  {% endif %}
+                                {% endfor %}
+                              </ul>
+                            </div>
+                          </div>
+                          <h4>
+                            <a class="product_name" href="{% url 'detail' product.id %}">{{ product.name }}</a>
+                          </h4>
+                          <div class="price-box">
+                            <span class="new-price">${{ product.price|floatformat:2 }}</span>
+                          </div>
+                        </div>
+                        <div class="add-actions">
+                          <ul class="add-actions-link">
+                            <li class="add-cart active">
+                              {% if product.id %}
+                              <a href="{% url 'cart_add' product.id %}">Add to cart</a>
+                              {% else %}
+                              <span class="btn btn-secondary disabled">Unavailable</span>
+                              {% endif %}
+                            </li>
+                            <li>
+  <a class="links-details" href="{% url 'wishlist_add' product.id %}">
+    <i class="fa fa-heart-o"></i>
+  </a>
+</li>
+                            <li>
+                              <a
+                                href="#"
+                                title="quick view"
+                                class="quick-view-btn"
+                                data-toggle="modal"
+                                data-target="#exampleModalCenter"
+                              >
+                                <i class="fa fa-eye"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- single-product-wrap end -->
+                  </div>
+                  {% endfor %}
+                </div>
+                {% else %}
+                <div class="col-lg-12">
+                  <div class="alert alert-info text-center">
+                    <h4>No products found</h4>
+                    <p>No products available at the moment.</p>
+                    <a href="{% url 'shop' %}" class="btn btn-primary">Visit Shop</a>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            <!-- All Products Content Area End Here -->
+          </div>
+          <!-- Li's Section Area End Here -->
+        </div>
+      </div>
+    </section><!-- All Products Area End Here -->{% endblock %}

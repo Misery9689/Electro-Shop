@@ -1,0 +1,124 @@
+<!-- LOGIN TEMPLATE (login.html) -->
+{% extends 'master.html' %} {% load static %} {% block title %}Welcome to E-Mart
+- Your One-Stop Shop{% endblock %} {% block content %}
+<!--Body Content-->
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
+      <form action="" method="POST">
+        {% csrf_token %}
+
+        <div class="login-form">
+          <h4 class="login-title text-center">Login</h4>
+
+          <!-- Display non-field errors -->
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="row">
+            {% for field in form %}
+            <div class="col-12 mb-20">
+              <label for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %}*{% endif %}
+              </label>
+              {{ field }} {% if field.errors %}
+              <div class="text-danger small">
+                {% for error in field.errors %}
+                <div>{{ error }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="col-12 d-flex justify-content-center">
+              <button type="submit" class="register-button mt-0">Login</button>
+            </div>
+
+            <!-- Signup Link -->
+            <div class="col-12 text-center mt-2">
+              <p class="signup-text">
+                Don't have an account?
+                <a href="{% url 'signup' %}" class="signup-link"
+                  >Please Sign Up</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Additional CSS for the new elements */
+  .forgot-password-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+  }
+
+  .forgot-password-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+
+  .signup-text {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 0;
+  }
+
+  .signup-link {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .signup-link:hover {
+    color: #1e7e34;
+    text-decoration: underline;
+  }
+
+  /* Ensure all form fields have consistent styling */
+  .login-form .form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+
+  .login-form .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: 0;
+  }
+
+  .login-form label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  .login-title {
+    margin-bottom: 30px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .mb-20 {
+    margin-bottom: 20px;
+  }
+
+  .mt-0 {
+    margin-top: 0 !important;
+  }
+</style>
+<!--End Body Content-->
+{% endblock %}

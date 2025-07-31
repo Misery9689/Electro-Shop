@@ -1,0 +1,220 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Electro Shop{% endblock %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <div class="container-fluid px-4 py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Header -->
+                <div class="edit-header mb-4">
+                    <h2 class="page-title">
+                        <i class="fa fa-edit mr-2"></i>Edit Profile
+                    </h2>
+                    <p class="page-subtitle">Update your account information</p>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Edit Form -->
+                <div class="edit-form-container">
+                    <form method="post" class="profile-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-section">
+                            <h4 class="section-title">Personal Information</h4>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="first_name">First Name</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="first_name" 
+                                               name="first_name" 
+                                               value="{{ user.first_name }}"
+                                               placeholder="Enter your first name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="last_name">Last Name</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="last_name" 
+                                               name="last_name" 
+                                               value="{{ user.last_name }}"
+                                               placeholder="Enter your last name">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       value="{{ user.email }}" 
+                                       required
+                                       placeholder="Enter your email address">
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4 class="section-title">Account Details</h4>
+                            
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="username" 
+                                       value="{{ user.username }}" 
+                                       disabled
+                                       readonly>
+                                <small class="form-text text-muted">Username cannot be changed</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Member Since</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       value="{{ user.date_joined|date:'F d, Y' }}" 
+                                       disabled
+                                       readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fa fa-save mr-1"></i>Save Changes
+                            </button>
+                            <a href="{% url 'profile' %}" class="btn btn-secondary btn-lg ml-2">
+                                <i class="fa fa-times mr-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-edit-container {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 20px;
+}
+
+.edit-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.page-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.edit-form-container {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.form-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.form-control:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .edit-form-container {
+        padding: 20px;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+</style>
+{% endblock %}

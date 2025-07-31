@@ -1,0 +1,538 @@
+{% extends 'master.html' %} {% load static %} {% block title %}My Profile -
+Electro Shop{% endblock %} {% block content %}
+<div class="profile-container">
+  <div class="container-fluid px-4 py-4">
+    <!-- Profile Header -->
+    <div class="profile-header mb-4">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="profile-info">
+            <div class="profile-avatar">
+              <i class="fa fa-user-circle"></i>
+            </div>
+            <div class="profile-details">
+              <h2 class="profile-name">
+                {% if user.first_name or user.last_name %} {{ user.first_name }}
+                {{ user.last_name }} {% else %} {{ user.username }} {% endif %}
+              </h2>
+              <p class="profile-username">@{{ user.username }}</p>
+              <p class="profile-email">{{ user.email }}</p>
+              <p class="profile-since">
+                Member since {{ user_since|date:"F Y" }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-right">
+          <a href="{% url 'profile_edit' %}" class="btn btn-primary">
+            <i class="fa fa-edit mr-1"></i>Edit Profile
+          </a>
+          <a
+            href="{% url 'change_password' %}"
+            class="btn btn-outline-secondary ml-2"
+          >
+            <i class="fa fa-lock mr-1"></i>Change Password
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %} {% for message in messages %}
+    <div
+      class="alert alert-{{ message.tags }} alert-dismissible fade show"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %} {% endif %}
+
+    <!-- Profile Stats -->
+    <div class="profile-stats mb-4">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa fa-heart text-danger"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{ wishlist_count }}</h3>
+              <p>Wishlist Items</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa fa-shopping-bag text-success"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{ total_orders }}</h3>
+              <p>Total Orders</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa fa-dollar text-warning"></i>
+            </div>
+            <div class="stat-info">
+              <h3>${{ total_spent|floatformat:2 }}</h3>
+              <p>Total Spent</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Sections -->
+    <div class="row">
+      <!-- Account Information -->
+      <div class="col-md-6">
+        <div class="profile-section">
+          <h4 class="section-title">
+            <i class="fa fa-user mr-2"></i>Account Information
+          </h4>
+          <div class="info-list">
+            <div class="info-item">
+              <label>Username:</label>
+              <span>{{ user.username }}</span>
+            </div>
+            <div class="info-item">
+              <label>First Name:</label>
+              <span>{{ user.first_name|default:"Not provided" }}</span>
+            </div>
+            <div class="info-item">
+              <label>Last Name:</label>
+              <span>{{ user.last_name|default:"Not provided" }}</span>
+            </div>
+            <div class="info-item">
+              <label>Email:</label>
+              <span>{{ user.email }}</span>
+            </div>
+            <div class="info-item">
+              <label>Date Joined:</label>
+              <span>{{ user.date_joined|date:"F d, Y" }}</span>
+            </div>
+            <div class="info-item">
+              <label>Last Login:</label>
+              <span
+                >{{ user.last_login|date:"F d, Y g:i A"|default:"Never" }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="col-md-6">
+        <div class="profile-section">
+          <h4 class="section-title">
+            <i class="fa fa-shopping-bag mr-2"></i>Recent Orders
+            <a
+              href="{% url 'order_history' %}"
+              class="btn btn-sm btn-outline-primary float-right"
+              >View All</a
+            >
+          </h4>
+          {% if recent_orders %}
+          <div class="orders-preview">
+            {% for order in recent_orders %}
+            <div class="order-item-preview">
+              <div class="order-info">
+                <h6>Order #{{ order.id }}</h6>
+                <p class="order-total">
+                  ${{ order.get_total_cost|floatformat:2 }}
+                </p>
+                <small class="text-muted"
+                  >{{ order.created_at|date:"M d, Y" }}</small
+                >
+              </div>
+              <div class="order-status">
+                <span
+                  class="badge badge-{% if order.paid %}success{% else %}warning{% endif %}"
+                >
+                  {% if order.paid %}Paid{% else %}Unpaid{% endif %}
+                </span>
+                <div class="payment-method">
+                  <small class="text-muted">{{ order.payment_method }}</small>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <i class="fa fa-shopping-bag"></i>
+            <p>No orders yet</p>
+            <a href="{% url 'shop' %}" class="btn btn-primary btn-sm"
+              >Start Shopping</a
+            >
+
+            <!-- Demo button to create sample order -->
+            
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Statistics (if user has orders) -->
+    {% if total_orders > 0 %}
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="profile-section">
+          <h4 class="section-title">
+            <i class="fa fa-chart-pie mr-2"></i>Payment Status
+          </h4>
+          <div class="payment-stats">
+            <div class="stat-item">
+              <div class="stat-circle paid">
+                <span>{{ paid_orders }}</span>
+              </div>
+              <p>Paid Orders</p>
+            </div>
+            <div class="stat-item">
+              <div class="stat-circle unpaid">
+                <span>{{ unpaid_orders }}</span>
+              </div>
+              <p>Unpaid Orders</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="profile-section">
+          <h4 class="section-title">
+            <i class="fa fa-credit-card mr-2"></i>Payment Methods
+          </h4>
+          <div class="payment-methods">
+            {% for method in payment_method_counts %}
+            <div class="method-item">
+              <span class="method-name">{{ method.payment_method }}</span>
+              <span class="method-count badge badge-primary"
+                >{{ method.count }}</span
+              >
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div class="profile-actions mt-4">
+      <h4 class="section-title">
+        <i class="fa fa-bolt mr-2"></i>Quick Actions
+      </h4>
+      <div class="action-buttons">
+        <a href="{% url 'shop' %}" class="btn btn-outline-primary">
+          <i class="fa fa-shopping-bag mr-1"></i>Continue Shopping
+        </a>
+        <a href="{% url 'wishlist' %}" class="btn btn-outline-danger">
+          <i class="fa fa-heart mr-1"></i>View Wishlist
+        </a>
+        <a href="{% url 'order_history' %}" class="btn btn-outline-info">
+          <i class="fa fa-history mr-1"></i>Order History
+        </a>
+        <a href="{% url 'profile_edit' %}" class="btn btn-outline-success">
+          <i class="fa fa-edit mr-1"></i>Edit Profile
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .profile-container {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 20px;
+  }
+
+  .profile-header {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .profile-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .profile-avatar i {
+    font-size: 80px;
+    color: #6c757d;
+  }
+
+  .profile-name {
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .profile-username {
+    color: #6c757d;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+  }
+
+  .profile-email {
+    color: #007bff;
+    margin-bottom: 5px;
+  }
+
+  .profile-since {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+
+  .profile-stats {
+    display: flex;
+    gap: 20px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .stat-icon i {
+    font-size: 2.5rem;
+  }
+
+  .stat-info h3 {
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 2rem;
+  }
+
+  .stat-info p {
+    color: #6c757d;
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+
+  .profile-section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    height: 100%;
+  }
+
+  .section-title {
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f8f9fa;
+    font-weight: 600;
+  }
+
+  .info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f8f9fa;
+  }
+
+  .info-item label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0;
+  }
+
+  .info-item span {
+    color: #6c757d;
+  }
+
+  .orders-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .order-item-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+
+  .order-item-preview:hover {
+    background-color: #f8f9fa;
+  }
+
+  .order-info h6 {
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 600;
+  }
+
+  .order-total {
+    color: #28a745;
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+  }
+
+  .order-status {
+    text-align: right;
+  }
+
+  .payment-method {
+    margin-top: 5px;
+  }
+
+  .payment-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .stat-circle.paid {
+    background-color: #28a745;
+  }
+
+  .stat-circle.unpaid {
+    background-color: #ffc107;
+  }
+
+  .payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .method-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .method-name {
+    font-weight: 500;
+    color: #495057;
+  }
+
+  .method-count {
+    font-size: 0.9rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+  }
+
+  .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+  }
+
+  .profile-actions {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .action-buttons .btn {
+    transition: all 0.3s ease;
+  }
+
+  .action-buttons .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .profile-info {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .profile-header .text-right {
+      text-align: center !important;
+      margin-top: 20px;
+    }
+
+    .action-buttons {
+      justify-content: center;
+    }
+
+    .action-buttons .btn {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .payment-stats {
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+</style>
+{% endblock %}

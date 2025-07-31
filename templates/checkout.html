@@ -1,0 +1,194 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="checkout-area pt-60 pb-30">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <!-- Django Messages -->
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <!-- End Django Messages -->
+
+                <!-- Removed "Returning customer?" and "Have a coupon?" sections for simplicity -->
+            </div>
+        </div>
+
+        {% if cart_items %}
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <form method="post" id="checkout-form"> {# Added id="checkout-form" #}
+                        {% csrf_token %}
+                        <div class="checkbox-form">
+                            <h3>Billing Details</h3>
+                            <div class="row">
+                                <!-- Country Select - Kept for UI, but not submitted to Django model -->
+                                <div class="col-md-12">
+                                    <div class="country-select clearfix">
+                                        <label>District <span class="required">*</span></label>
+                                        <select class="nice-select wide">
+                                            <option data-display="Boeng Keng Kangh">Boeng Keng Kangh</option>
+                                            <option value="Khan Chamkar Mon">Khan Chamkar Mon</option>
+                                            <option value="Khan Tuol Kouk">Khan Tuol Kouk</option>
+                                            <option value="Khan Sen Sok">Khan Sen Sok</option>
+                                            <option value="Khan Chroy Changvar">Khan Chroy Changvar</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- First Name - Kept for UI, but not submitted to Django model -->
+                                <div class="col-md-12">
+    <div class="checkout-form-list">
+        <label>Name <span class="required">*</span></label>
+        <input name="name" placeholder="" type="text" value="{{ request.user.name|default:'' }}" required>
+    </div>
+</div>
+                                
+                                <!-- Company Name - Kept for UI, but not submitted to Django model -->
+                                
+                                <!-- Combined Address Field for Django Model -->
+                                <div class="col-md-12">
+                                    <div class="checkout-form-list">
+                                        <label for="shipping_address">Full Shipping Address <span class="required">*</span></label>
+                                        <textarea id="shipping_address" name="shipping_address" rows="4" required placeholder="Street address, Apartment, suite, unit, Town / City, State / County, Postcode / Zip"></textarea>
+                                    </div>
+                                </div>
+                                <!-- Email Address - Kept for UI, but not submitted to Django model -->
+                                <div class="col-md-6">
+    <div class="checkout-form-list">
+        <label>Email Address <span class="required">*</span></label>
+        <input name="email" placeholder="" type="email" value="{{ request.user.email|default:'' }}" required>
+    </div>
+</div>
+                                <!-- Phone - Kept for UI, but not submitted to Django model -->
+                                <div class="col-md-6">
+    <div class="checkout-form-list">
+        <label>Phone <span class="required">*</span></label>
+        <input name="phone" type="text" value="" required>
+    </div>
+</div>
+                                <!-- Removed "Create an account?" section for simplicity -->
+                            </div>
+                            <!-- Removed "Ship to a different address?" section for simplicity -->
+                            <div class="order-notes">
+                                <div class="checkout-form-list">
+                                    <label>Order Notes</label>
+                                    <textarea id="checkout-mess" cols="30" rows="10" placeholder="Notes about your order, e.g. special notes for delivery."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form> {# Form ends here, will be re-opened below for payment and submit button #}
+                </div>
+
+                <div class="col-lg-6 col-12">
+                    <div class="your-order">
+                        <h3>Your order</h3>
+                        <div class="your-order-table table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="cart-product-name">Product</th>
+                                        <th class="cart-product-total">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart_items %}
+                                        <tr class="cart_item">
+                                            <td class="cart-product-name"> {{ item.product.name }}<strong class="product-quantity"> × {{ item.quantity }}</strong></td>
+                                            <td class="cart-product-total"><span class="amount">${{ item.total|floatformat:2 }}</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="cart-subtotal">
+                                        <th>Cart Subtotal</th>
+                                        <td><span class="amount">${{ cart_total|floatformat:2 }}</span></td>
+                                    </tr>
+                                    <tr class="order-total">
+                                        <th>Order Total</th>
+                                        <td><strong><span class="amount">${{ cart_total|floatformat:2 }}</span></strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-accordion">
+                                <div id="accordion">
+                                    <div class="card">
+                                        <div class="card-header" id="#payment-1">
+                                            <h5 class="panel-title">
+                                                <a class="" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    Direct Bank Transfer.
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseOne" class="collapse show" data-parent="#accordion">
+                                            <div class="card-body">
+                                                <p>Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
+                                                <!-- Payment Method Select -->
+                                                <div class="form-group">
+                                                    <label for="payment_method">Select Payment Method:</label>
+                                                    <select id="payment_method" name="payment_method" form="checkout-form"> {# Link to the form above #}
+                                                        <option value="Cash on Delivery">Cash on Delivery</option>
+                                                        <option value="Card" disabled>Credit/Debit Card (Coming Soon)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header" id="#payment-2">
+                                            <h5 class="panel-title">
+                                                <a class="collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                    Cheque Payment
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseTwo" class="collapse" data-parent="#accordion">
+                                            <div class="card-body">
+                                                <p>Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode / Zip.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header" id="#payment-3">
+                                            <h5 class="panel-title">
+                                                <a class="collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    PayPal
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseThree" class="collapse" data-parent="#accordion">
+                                            <div class="card-body">
+                                                <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal account.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-button-payment">
+                                <button type="submit" form="checkout-form">Place order</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>Your cart is empty. Please add items to your cart before proceeding to checkout.</p>
+                    <p><a href="{% url 'shop' %}">Continue Shopping</a></p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
